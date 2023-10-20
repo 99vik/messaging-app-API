@@ -6,4 +6,5 @@ Rails.application.routes.draw do
 
   get 'chats', to: 'chats#get_all_chats'
   get 'public_chats', to: 'chats#get_all_public_chats'
+  post 'create_chat', to: 'chats#create_chat'
 end
