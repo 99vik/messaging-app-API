@@ -5,4 +5,5 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   get 'chats', to: 'chats#get_all_chats'
+  get 'public_chats', to: 'chats#get_all_public_chats'
 end
