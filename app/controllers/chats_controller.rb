@@ -27,6 +27,20 @@ class ChatsController < ApplicationController
     end
   end
 
+  def join_public_chat
+    chat = Chat.find(params[:id])
+    user_id = current_devise_api_token.resource_owner.id
+
+    return if chat.type != 'public'
+
+    if !chat.participant_ids.include?(user_id)
+      chat.chat_participants.create(participant_id: user_id)
+      render json: { message: "Added to chat" }, status: :ok
+    else
+      render json: { message: "Error adding to chat" }, status: :unprocessable_entity
+    end
+  end
+
   private 
   
   def chat_params
