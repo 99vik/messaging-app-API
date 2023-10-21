@@ -8,4 +8,5 @@ class User < ApplicationRecord
 
   has_many :chat_participants, foreign_key: 'participant_id'
   has_many :chats, through: :chat_participants
+  has_many :messages
 end
