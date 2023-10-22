@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   post 'join_public_chat', to: 'chats#join_public_chat'
 
   get 'get_all_chat_messages/:id', to: 'messages#get_all_chat_messages'
+  post 'send_message', to: 'messages#send_message'
 end

@@ -18,7 +18,28 @@ class MessagesController < ApplicationController
     else
       render json: { message: "Error loading chat messages" }, status: :unprocessable_entity
     end
+  end
 
+  def send_message
+    chat = Chat.find(new_message_params[:chatID])
+    user_id = current_devise_api_token.resource_owner.id  
 
+    return if !chat.participant_ids.include?(user_id)  
+    
+    message = chat.messages.new
+    message[:user_id] = user_id
+    message[:body] = new_message_params[:body]
+
+    if message.save
+      render json: message
+    else
+      render json: message.errors, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def new_message_params
+    params.require(:message).permit(:body, :chatID)
   end
 end
