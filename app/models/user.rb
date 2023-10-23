@@ -4,7 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :api
 
-  validates :username, presence: true, length: { in: 4..18 }
+  validates :username, presence: true, length: { in: 4..18 }, uniqueness: true
 
   has_many :admined_chats, class_name: 'Chat', foreign_key: 'admin_id', dependent: :destroy
 
