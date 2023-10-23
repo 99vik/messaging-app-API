@@ -10,4 +10,6 @@ Rails.application.routes.draw do
   post 'send_message', to: 'messages#send_message'
 
   get 'current_user_profile', to: 'profile#current_user_profile'
+  post 'change_username', to: 'profile#change_username'
+  post 'change_description', to: 'profile#change_description'
 end
