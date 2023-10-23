@@ -11,7 +11,7 @@ class MessagesController < ApplicationController
           render json: { message: "User is not chat participant" }, status: :unauthorized
         else
             messages_with_usernames = chat.messages.map do |message|
-            message.as_json.merge(username: message.user.email)
+            message.as_json.merge(username: message.user.username)
           end
           render json: messages_with_usernames
         end

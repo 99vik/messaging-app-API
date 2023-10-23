@@ -8,4 +8,6 @@ Rails.application.routes.draw do
 
   get 'get_all_chat_messages/:id', to: 'messages#get_all_chat_messages'
   post 'send_message', to: 'messages#send_message'
+
+  get 'current_user_profile', to: 'profile#current_user_profile'
 end

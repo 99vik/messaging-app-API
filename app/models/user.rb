@@ -5,6 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, :api
 
   validates :username, presence: true, length: { in: 4..18 }, uniqueness: true
+  validates :description, length: { maximum: 50 }
 
   has_many :admined_chats, class_name: 'Chat', foreign_key: 'admin_id', dependent: :destroy
 
