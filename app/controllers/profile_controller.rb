@@ -18,7 +18,14 @@ class ProfileController < ApplicationController
     end
   end
 
-  
+  def change_description
+    user = current_devise_api_token.resource_owner
+
+    if user.update(description_params)
+      render json: { message: 'Description updated' }, status: :ok 
+    else
+      render json: user.errors, status: :unprocessable_entity
+    end
   end
 
   private
@@ -27,5 +34,7 @@ class ProfileController < ApplicationController
     params.require(:profile).permit(:username)
   end
 
-  
+  def description_params
+    params.require(:profile).permit(:description)
+  end
 end
