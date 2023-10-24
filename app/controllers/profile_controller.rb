@@ -33,7 +33,7 @@ class ProfileController < ApplicationController
     return if !user
 
     query = params[:query]
-    users = User.where('username LIKE ?', "%#{query}%")
+    users = User.where('lower(username) LIKE ?', "%#{query.downcase}%").where.not(id: user.id)
 
     render json: users, only: [:id, :username, :description]
   end
