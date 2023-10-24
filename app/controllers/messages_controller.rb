@@ -10,10 +10,16 @@ class MessagesController < ApplicationController
         if !chat.participant_ids.include?(user_id)
           render json: { message: "User is not chat participant" }, status: :unauthorized
         else
-            messages_with_usernames = chat.messages.map do |message|
-            message.as_json.merge(username: message.user.username)
+          messages_with_users = chat.messages.map do |message|
+            message_user = message.user
+            user = {
+              id: message_user.id,
+              username: message_user.username,
+              description: message_user.description,
+            }
+            message.as_json.merge(user: user)
           end
-          render json: messages_with_usernames
+          render json: messages_with_users
         end
     else
       render json: { message: "Error loading chat messages" }, status: :unprocessable_entity
