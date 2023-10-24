@@ -28,4 +28,26 @@ class FriendshipsController < ApplicationController
       render json: { status: 'sent' }, status: :ok
     end
   end
+
+  def cancel_friend_request
+    current_user = current_devise_api_token.resource_owner
+    user = User.find(params[:friendship][:id])
+
+    if !user.incoming_friend_request_senders.include?(current_user)
+      render json: { message: 'error' }, status: :unprocessable_entity
+    else
+      request = FriendRequest.where(sender_id: current_user.id, reciever_id: user.id).first
+      if request.destroy
+        render json: { status: 'canceled' }, status: :ok
+      else
+        render json: { message: 'error' }, status: :unprocessable_entity
+      end
+    end
+  end
+
+  def accept_friend_request
+  end
+
+  def remove_friend
+  end
 end

@@ -16,4 +16,7 @@ Rails.application.routes.draw do
 
   get 'check_friendship_status/:id', to: 'friendships#check_friendship_status'
   post 'send_friend_request', to: 'friendships#send_friend_request'
+  post 'cancel_friend_request', to: 'friendships#cancel_friend_request'
+  post 'accept_friend_request', to: 'friendships#accept_friend_request'
+  post 'remove_friend', to: 'friendships#remove_friend'
 end
