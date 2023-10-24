@@ -13,5 +13,7 @@ class User < ApplicationRecord
   has_many :chats, through: :chat_participants, dependent: :destroy
   has_many :messages, dependent: :destroy
 
+  has_many :friendships, dependent: :destroy
+  has_many :friends, through: :friendships, dependent: :destroy
   has_many :incoming_friend_requests, class_name: 'FriendRequest', foreign_key: 'reciever_id', dependent: :destroy
 end
