@@ -49,5 +49,16 @@ class FriendshipsController < ApplicationController
   end
 
   def remove_friend
+    current_user = current_devise_api_token.resource_owner
+    user = User.find(params[:friendship][:id])
+
+    if !current_user.friends.include?(user)
+      render json: { message: 'error' }, status: :unprocessable_entity
+    else
+      friendships = Friendship.where(user: current_user.id, friend: user.id).or(Friendship.where(user: user.id, friend: current_user.id))
+      
+      friendships.each {|friendship| friendship.destroy }
+      render json: { message: 'error' }
+    end
   end
 end
