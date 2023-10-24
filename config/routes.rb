@@ -13,4 +13,6 @@ Rails.application.routes.draw do
   get 'search_profiles/:query', to: 'profile#search_profiles'
   post 'change_username', to: 'profile#change_username'
   post 'change_description', to: 'profile#change_description'
+
+  get 'check_friendship_status/:id', to: 'friendships#check_friendship_status'
 end
