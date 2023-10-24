@@ -15,4 +15,5 @@ Rails.application.routes.draw do
   post 'change_description', to: 'profile#change_description'
 
   get 'check_friendship_status/:id', to: 'friendships#check_friendship_status'
+  post 'send_friend_request', to: 'friendships#send_friend_request'
 end
