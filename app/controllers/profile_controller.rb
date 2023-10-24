@@ -28,6 +28,16 @@ class ProfileController < ApplicationController
     end
   end
 
+  def search_profiles
+    user = current_devise_api_token.resource_owner
+    return if !user
+
+    query = params[:query]
+    users = User.where('username LIKE ?', "%#{query}%")
+
+    render json: users, only: [:id, :username, :description]
+  end
+
   private
 
   def username_params
