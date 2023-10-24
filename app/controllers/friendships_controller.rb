@@ -46,6 +46,20 @@ class FriendshipsController < ApplicationController
   end
 
   def accept_friend_request
+    current_user = current_devise_api_token.resource_owner
+    user = User.find(params[:friendship][:id])
+
+    if !current_user.incoming_friend_request_senders.include?(user)
+      render json: { message: 'error' }, status: :unprocessable_entity
+    else
+      request = FriendRequest.where(sender_id: user.id, reciever_id: current_user.id).first
+      request.destroy
+      
+      Friendship.create(user_id: current_user.id, friend_id: user.id)
+      Friendship.create(user_id: user.id, friend_id: current_user.id)
+      
+      render json: { status: 'added' }, status: :ok
+    end
   end
 
   def remove_friend
