@@ -2,6 +2,16 @@ class FriendshipsController < ApplicationController
   skip_before_action :verify_authenticity_token, raise: false
   before_action :authenticate_devise_api_token!
 
+  def get_current_user_friends
+    current_user = current_devise_api_token.resource_owner
+
+    if current_user
+      render json: current_user.friends, only: [:id, :username, :description]
+    else
+      render json: { message: 'error' }, status: :unprocessable_entity
+    end
+  end
+
   def check_friendship_status
     current_user = current_devise_api_token.resource_owner
     user = User.find(params[:id])
@@ -54,7 +64,7 @@ class FriendshipsController < ApplicationController
     else
       request = FriendRequest.where(sender_id: user.id, reciever_id: current_user.id).first
       request.destroy
-      
+
       Friendship.create(user_id: current_user.id, friend_id: user.id)
       Friendship.create(user_id: user.id, friend_id: current_user.id)
       

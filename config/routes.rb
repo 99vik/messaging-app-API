@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   post 'change_username', to: 'profile#change_username'
   post 'change_description', to: 'profile#change_description'
 
+  get 'get_current_user_friends', to: 'friendships#get_current_user_friends'
   get 'check_friendship_status/:id', to: 'friendships#check_friendship_status'
   post 'send_friend_request', to: 'friendships#send_friend_request'
   post 'cancel_friend_request', to: 'friendships#cancel_friend_request'
