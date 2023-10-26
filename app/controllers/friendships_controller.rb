@@ -67,6 +67,10 @@ class FriendshipsController < ApplicationController
 
       Friendship.create(user_id: current_user.id, friend_id: user.id)
       Friendship.create(user_id: user.id, friend_id: current_user.id)
+
+      chat = Chat.create(type: 'direct')
+      chat.chat_participants.create(participant_id: current_user.id)
+      chat.chat_participants.create(participant_id: user.id)
       
       render json: { status: 'added' }, status: :ok
     end
@@ -80,9 +84,13 @@ class FriendshipsController < ApplicationController
       render json: { message: 'error' }, status: :unprocessable_entity
     else
       friendships = Friendship.where(user: current_user.id, friend: user.id).or(Friendship.where(user: user.id, friend: current_user.id))
-      
       friendships.each {|friendship| friendship.destroy }
-      render json: { message: 'error' }
+
+      direct_chats = current_user.chats.where(type: 'direct')
+      chat = direct_chats.select {|chat| chat.participant_ids.include?(user.id)}
+      chat[0].destroy
+
+      render json: { message: 'removed friend' }
     end
   end
 end
