@@ -53,6 +53,15 @@ class ChatsController < ApplicationController
     end
   end
 
+  def find_direct_chat
+    current_user = current_devise_api_token.resource_owner
+    user = User.find(params[:id])
+    direct_chats = current_user.chats.where(type: 'direct')
+    chat = direct_chats.select { |chat_| chat_.participant_ids.include?(user.id) }
+    
+    render json: chat[0]
+  end
+
   private 
   
   def chat_params

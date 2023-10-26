@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   get 'chats', to: 'chats#get_all_chats'
   get 'public_chats', to: 'chats#get_all_public_chats'
+  get 'find_direct_chat/:id', to: 'chats#find_direct_chat'
   post 'create_chat', to: 'chats#create_chat'
   post 'join_public_chat', to: 'chats#join_public_chat'
 
