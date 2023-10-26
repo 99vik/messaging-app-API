@@ -87,7 +87,7 @@ class FriendshipsController < ApplicationController
       friendships.each {|friendship| friendship.destroy }
 
       direct_chats = current_user.chats.where(type: 'direct')
-      chat = direct_chats.select {|chat| chat.participant_ids.include?(user.id)}
+      chat = direct_chats.select { |chat_| chat_.participant_ids.include?(user.id) }
       chat[0].destroy
 
       render json: { message: 'removed friend' }

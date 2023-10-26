@@ -4,7 +4,19 @@ class ChatsController < ApplicationController
   
   def get_all_chats
     if current_devise_api_token
-      render json: current_devise_api_token.resource_owner.chats
+      chats = current_devise_api_token.resource_owner.chats
+
+      chats_expanded = chats.map do |chat|
+        last_message = chat.messages.last
+        if chat[:type] == 'direct'
+          other_user = User.find(chat.participant_ids.find { |id| id != current_devise_api_token.resource_owner.id })
+          chat.as_json.merge(last_message: last_message, name: other_user.username)
+        else
+          chat.as_json.merge(last_message: last_message)
+        end
+      end
+      p chats_expanded
+      render json: chats_expanded
     else
       render json: { message: 'error' }, status: :unauthorized
     end
@@ -35,7 +47,7 @@ class ChatsController < ApplicationController
 
     if !chat.participant_ids.include?(user_id)
       chat.chat_participants.create(participant_id: user_id)
-      render json: { message: "Added to chat" }, status: :ok
+      render json: chat, status: :ok
     else
       render json: { message: "Error adding to chat" }, status: :unprocessable_entity
     end
