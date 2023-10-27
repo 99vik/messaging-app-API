@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
 
   get 'chats', to: 'chats#get_all_chats'
+  get 'chat_participants/:id', to: 'chats#get_chat_participants'
   get 'public_chats', to: 'chats#get_all_public_chats'
   get 'find_direct_chat/:id', to: 'chats#find_direct_chat'
   post 'create_chat', to: 'chats#create_chat'

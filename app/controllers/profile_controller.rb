@@ -41,12 +41,11 @@ class ProfileController < ApplicationController
   end
 
   def search_profiles
-    user = current_devise_api_token.resource_owner
-    return if !user
+    current_user = current_devise_api_token.resource_owner
+    return if !current_user
 
     query = params[:query]
-    users = User.where('lower(username) LIKE ?', "%#{query.downcase}%").where.not(id: user.id).select(:id, :username, :description)
-
+    users = User.where('lower(username) LIKE ?', "%#{query.downcase}%").where.not(id: current_user.id).select(:id, :username, :description)
     users_with_images = users.map do |user|
       image = user.image.attached? ? url_for(user.image) : nil
       user.as_json.merge(image: image)

@@ -21,6 +21,22 @@ class ChatsController < ApplicationController
     end
   end
 
+  def get_chat_participants
+    current_user = current_devise_api_token.resource_owner
+    chat = Chat.find(params[:id])
+    return if !chat.participant_ids.include?(current_user.id) || chat.type == 'direct'
+
+    participants = chat.participants
+    participants_with_images = participants.map do |participant|
+      next if participant.id == current_user.id
+
+      image = participant.image.attached? ? url_for(participant.image) : nil
+      participant.as_json.merge(image: image)
+    end
+
+    render json: participants_with_images.compact()
+  end
+
   def get_all_public_chats
     public_chats = Chat.where("type = ?", 'public')
     render json: public_chats
