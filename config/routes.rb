@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'search_profiles/:query', to: 'profile#search_profiles'
   post 'change_username', to: 'profile#change_username'
   post 'change_description', to: 'profile#change_description'
+  post 'change_profile_image', to: 'profile#change_profile_image'
 
   get 'get_current_user_friends', to: 'friendships#get_current_user_friends'
   get 'check_friendship_status/:id', to: 'friendships#check_friendship_status'

@@ -15,7 +15,6 @@ class ChatsController < ApplicationController
           chat.as_json.merge(last_message: last_message)
         end
       end
-      p chats_expanded
       render json: chats_expanded
     else
       render json: { message: 'error' }, status: :unauthorized

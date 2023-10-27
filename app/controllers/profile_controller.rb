@@ -4,8 +4,9 @@ class ProfileController < ApplicationController
 
   def current_user_profile
     user = current_devise_api_token.resource_owner
+    image = user.image.attached ? url_for(user.image) : null
 
-    render json: { email: user.email, username: user.username, description: user.description }
+    render json: { email: user.email, username: user.username, description: user.description, image: image }
   end
 
   def change_username
@@ -23,6 +24,17 @@ class ProfileController < ApplicationController
 
     if user.update(description_params)
       render json: { message: 'Description updated' }, status: :ok 
+    else
+      render json: user.errors, status: :unprocessable_entity
+    end
+  end
+
+  def change_profile_image
+    user = current_devise_api_token.resource_owner
+    image = image_params[:image]
+
+    if user.image.attach(image)
+      render json: { message: 'Profile picture changed' }, status: :ok 
     else
       render json: user.errors, status: :unprocessable_entity
     end
@@ -46,5 +58,9 @@ class ProfileController < ApplicationController
 
   def description_params
     params.require(:profile).permit(:description)
+  end
+
+  def image_params
+    params.require(:profile).permit(:image)
   end
 end
