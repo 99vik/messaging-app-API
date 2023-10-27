@@ -45,9 +45,14 @@ class ProfileController < ApplicationController
     return if !user
 
     query = params[:query]
-    users = User.where('lower(username) LIKE ?', "%#{query.downcase}%").where.not(id: user.id)
+    users = User.where('lower(username) LIKE ?', "%#{query.downcase}%").where.not(id: user.id).select(:id, :username, :description)
 
-    render json: users, only: [:id, :username, :description]
+    users_with_images = users.map do |user|
+      image = user.image.attached? ? url_for(user.image) : nil
+      user.as_json.merge(image: image)
+    end
+
+    render json: users_with_images
   end
 
   private

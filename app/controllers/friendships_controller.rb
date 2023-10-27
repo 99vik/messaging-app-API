@@ -6,7 +6,12 @@ class FriendshipsController < ApplicationController
     current_user = current_devise_api_token.resource_owner
 
     if current_user
-      render json: current_user.friends, only: [:id, :username, :description]
+      friends = current_user.friends.select(:id, :username, :description)
+      friends_with_images = friends.map do |friend|
+        image = friend.image.attached? ? url_for(friend.image) : nil
+        friend.as_json.merge(image: image)
+      end
+      render json: friends_with_images
     else
       render json: { message: 'error' }, status: :unprocessable_entity
     end
