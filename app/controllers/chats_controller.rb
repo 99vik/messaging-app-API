@@ -74,7 +74,21 @@ class ChatsController < ApplicationController
     direct_chats = current_user.chats.where(type: 'direct')
     chat = direct_chats.select { |chat_| chat_.participant_ids.include?(user.id) }
     
-    render json: chat[0]
+    render json: chat[0].as_json.merge(name: user.username)
+  end
+
+  def leave_chat
+    current_user = current_devise_api_token.resource_owner
+    chat = Chat.find(params[:id])
+
+    return if !chat.participant_ids.include?(current_user.id)
+
+    participation = chat.chat_participants.where(participant_id: current_user.id)[0]
+    if participation.destroy
+      render json: {message: 'left chat'}, status: :ok
+    else
+      render json: {message: 'error'}, status: :unprocessable_entity
+    end
   end
 
   private 
