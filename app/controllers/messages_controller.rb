@@ -16,6 +16,7 @@ class MessagesController < ApplicationController
               id: message_user.id,
               username: message_user.username,
               description: message_user.description,
+              image: message_user.image.attached? ? url_for(message_user.image) : nil
             }
             message.as_json.merge(user: user)
           end
