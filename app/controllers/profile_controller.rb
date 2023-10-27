@@ -4,7 +4,7 @@ class ProfileController < ApplicationController
 
   def current_user_profile
     user = current_devise_api_token.resource_owner
-    image = user.image.attached ? url_for(user.image) : null
+    image = user.image.attached? ? url_for(user.image) : null
 
     render json: { email: user.email, username: user.username, description: user.description, image: image }
   end
