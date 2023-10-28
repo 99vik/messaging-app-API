@@ -91,6 +91,25 @@ class ChatsController < ApplicationController
     end
   end
 
+  def get_addable_users_to_chat
+    current_user = current_devise_api_token.resource_owner
+    chat = Chat.find(params[:id])
+
+    return if chat.admin != current_user
+
+    friends = current_user.friends
+    addable_friends = friends.select { |friend| !chat.participants.include?(friend)}
+    addable_friends_with_images = addable_friends.map do |friend|
+      image = friend.image.attached? ? url_for(friend.image) : nil
+      friend.as_json.merge(image: image)
+    end
+
+    render json: addable_friends_with_images
+  end
+
+  def add_user_to_chat
+  end
+
   private 
   
   def chat_params

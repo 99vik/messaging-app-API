@@ -5,9 +5,11 @@ Rails.application.routes.draw do
   get 'chat_participants/:id', to: 'chats#get_chat_participants'
   get 'public_chats', to: 'chats#get_all_public_chats'
   get 'find_direct_chat/:id', to: 'chats#find_direct_chat'
+  get 'get_addable_users_to_chat/:id', to: 'chats#get_addable_users_to_chat'
   post 'create_chat', to: 'chats#create_chat'
   post 'join_public_chat', to: 'chats#join_public_chat'
   post 'leave_chat', to: 'chats#leave_chat'
+  post 'add_user_to_chat', to: 'chats#add_user_to_chat'
 
   get 'get_all_chat_messages/:id', to: 'messages#get_all_chat_messages'
   post 'send_message', to: 'messages#send_message'
