@@ -121,6 +121,21 @@ class ChatsController < ApplicationController
     end
   end
 
+  def remove_user_from_chat
+    current_user = current_devise_api_token.resource_owner
+    chat = Chat.find(user_chat_params[:chat_id])
+    user = User.find(user_chat_params[:user_id])
+
+    return if chat.admin != current_user || !chat.participants.include?(user)
+
+    participation = chat.chat_participants.where(participant_id: user.id)[0]
+    if participation.destroy
+      render json: {message: 'user removed'}, status: :ok
+    else
+      render json: {message: 'error removing user from chat'}, status: :unprocessable_entity
+    end
+  end
+
   private 
   
   def chat_params
