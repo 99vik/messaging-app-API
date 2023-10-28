@@ -108,11 +108,26 @@ class ChatsController < ApplicationController
   end
 
   def add_user_to_chat
+    current_user = current_devise_api_token.resource_owner
+    chat = Chat.find(user_chat_params[:chat_id])
+    user = User.find(user_chat_params[:user_id])
+
+    return if chat.admin != current_user || chat.participants.include?(user)
+
+    if chat.chat_participants.create(participant_id: user.id)
+      render json: {message: 'user added'}, status: :ok
+    else 
+      render json: {message: 'error adding user'}, status: :unprocessable_entity
+    end
   end
 
   private 
   
   def chat_params
     params.require(:chat).permit(:name, :type)
+  end
+
+  def user_chat_params
+    params.require(:chat).permit(:chat_id, :user_id)
   end
 end
