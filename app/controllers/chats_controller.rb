@@ -8,11 +8,14 @@ class ChatsController < ApplicationController
 
       chats_expanded = chats.map do |chat|
         last_message = chat.messages.last
+        
         if chat[:type] == 'direct'
           other_user = User.find(chat.participant_ids.find { |id| id != current_devise_api_token.resource_owner.id })
-          chat.as_json.merge(last_message: last_message, name: other_user.username)
+          image = other_user.image.attached? ? url_for(other_user.image) : nil
+          chat.as_json.merge(last_message: last_message, name: other_user.username, image: image)
         else
-          chat.as_json.merge(last_message: last_message)
+          image = chat.image.attached? ? url_for(chat.image) : nil
+          chat.as_json.merge(last_message: last_message, image: image)
         end
       end
       render json: chats_expanded
