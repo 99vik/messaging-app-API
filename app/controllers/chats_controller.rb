@@ -74,10 +74,12 @@ class ChatsController < ApplicationController
   def find_direct_chat
     current_user = current_devise_api_token.resource_owner
     user = User.find(params[:id])
+    image = user.image.attached? ? url_for(user.image) : nil
+
     direct_chats = current_user.chats.where(type: 'direct')
     chat = direct_chats.select { |chat_| chat_.participant_ids.include?(user.id) }
     
-    render json: chat[0].as_json.merge(name: user.username)
+    render json: chat[0].as_json.merge(name: user.username, image: image)
   end
 
   def leave_chat
