@@ -149,6 +149,20 @@ class ChatsController < ApplicationController
     end
   end
 
+  def change_chat_image
+    current_user = current_devise_api_token.resource_owner
+    chat = Chat.find(chat_image_params[:id])
+
+    return if chat.admin != current_user
+
+    image = chat_image_params[:image]
+    if chat.image.attach(image)
+      render json: { message: 'Chat image changed' }, status: :ok 
+    else
+      render json: chat.errors, status: :unprocessable_entity
+    end
+  end
+
   private 
   
   def chat_params
@@ -161,5 +175,9 @@ class ChatsController < ApplicationController
 
   def chat_name_params
     params.require(:chat).permit(:name, :id)
+  end
+
+  def chat_image_params
+    params.require(:chat).permit(:id, :image)
   end
 end

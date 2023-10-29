@@ -9,6 +9,8 @@ class Chat < ApplicationRecord
   validates :name, presence: true, length: { in: 6..30 }, if: :chat_not_direct?
   has_many :messages
 
+  has_one_attached :image
+
   def chat_not_direct?
     type != 'direct'
   end
