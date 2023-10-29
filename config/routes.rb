@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   post 'leave_chat', to: 'chats#leave_chat'
   post 'add_user_to_chat', to: 'chats#add_user_to_chat'
   post 'remove_user_from_chat', to: 'chats#remove_user_from_chat'
+  post 'change_chat_name', to: 'chats#change_chat_name'
+
 
   get 'get_all_chat_messages/:id', to: 'messages#get_all_chat_messages'
   post 'send_message', to: 'messages#send_message'

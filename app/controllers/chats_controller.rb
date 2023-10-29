@@ -136,6 +136,19 @@ class ChatsController < ApplicationController
     end
   end
 
+  def change_chat_name
+    current_user = current_devise_api_token.resource_owner
+    chat = Chat.find(chat_name_params[:id])
+
+    return if chat.admin != current_user
+
+    if chat.update(name: chat_name_params[:name])
+      render json: { message: 'Name updated' }, status: :ok 
+    else
+      render json: chat.errors, status: :unprocessable_entity
+    end
+  end
+
   private 
   
   def chat_params
@@ -144,5 +157,9 @@ class ChatsController < ApplicationController
 
   def user_chat_params
     params.require(:chat).permit(:chat_id, :user_id)
+  end
+
+  def chat_name_params
+    params.require(:chat).permit(:name, :id)
   end
 end
