@@ -38,7 +38,16 @@ class MessagesController < ApplicationController
     message[:body] = new_message_params[:body]
 
     if message.save
-      render json: message
+      user = current_devise_api_token.resource_owner
+      user_data = {
+        id: user.id,
+        username: user.username,
+        description: user.description,
+        image: user.image.attached? ? url_for(user.image) : nil
+      }
+      ChatChannel.broadcast_to(chat, message.as_json.merge(user: user_data))
+      
+      render json: {message: 'Message sent'}, status: :ok
     else
       render json: message.errors, status: :unprocessable_entity
     end
