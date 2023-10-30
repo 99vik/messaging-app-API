@@ -8,17 +8,23 @@ class ChatsController < ApplicationController
 
       chats_expanded = chats.map do |chat|
         last_message = chat.messages.last
+        if last_message
+          last_message_time = last_message.created_at
+        else
+          last_message_time = chat.created_at
+        end
         
         if chat[:type] == 'direct'
           other_user = User.find(chat.participant_ids.find { |id| id != current_devise_api_token.resource_owner.id })
           image = other_user.image.attached? ? url_for(other_user.image) : nil
-          chat.as_json.merge(last_message: last_message, name: other_user.username, image: image)
+          chat.as_json.merge(last_message: last_message, name: other_user.username, image: image, last_message_time: last_message_time.to_i)
         else
           image = chat.image.attached? ? url_for(chat.image) : nil
-          chat.as_json.merge(last_message: last_message, image: image)
+          chat.as_json.merge(last_message: last_message, image: image, last_message_time: last_message_time.to_i)
         end
       end
-      render json: chats_expanded
+
+      render json: chats_expanded.sort_by { |chat| chat[:last_message_time] }.reverse
     else
       render json: { message: 'error' }, status: :unauthorized
     end
