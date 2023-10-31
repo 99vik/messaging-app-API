@@ -56,7 +56,9 @@ class ChatsController < ApplicationController
     chat.admin_id = current_devise_api_token.resource_owner.id
     
     if chat.save
-      chat.chat_participants.create(participant_id: current_devise_api_token.resource_owner.id)
+      user = current_devise_api_token.resource_owner
+      chat.chat_participants.create(participant_id: user.id)
+      UserChatsChannel.broadcast_to(user, 'added chat' )
       render json: chat
     else
       render json: chat.errors, status: :unprocessable_entity
@@ -65,12 +67,14 @@ class ChatsController < ApplicationController
 
   def join_public_chat
     chat = Chat.find(params[:id])
-    user_id = current_devise_api_token.resource_owner.id
+    user = current_devise_api_token.resource_owner
 
     return if chat.type != 'public'
 
-    if !chat.participant_ids.include?(user_id)
-      chat.chat_participants.create(participant_id: user_id)
+    if !chat.participant_ids.include?(user.id)
+      chat.chat_participants.create(participant_id: user.id)
+      UserChatsChannel.broadcast_to(user, {id: chat.id} )
+
       render json: chat, status: :ok
     else
       render json: { message: "Error adding to chat" }, status: :unprocessable_entity
@@ -96,6 +100,8 @@ class ChatsController < ApplicationController
 
     participation = chat.chat_participants.where(participant_id: current_user.id)[0]
     if participation.destroy
+      user = current_user
+      UserChatsChannel.broadcast_to(user, 'change' )
       render json: {message: 'left chat'}, status: :ok
     else
       render json: {message: 'error'}, status: :unprocessable_entity
@@ -126,6 +132,8 @@ class ChatsController < ApplicationController
     return if chat.admin != current_user || chat.participants.include?(user)
 
     if chat.chat_participants.create(participant_id: user.id)
+      UserChatsChannel.broadcast_to(user, 'new' )
+
       render json: {message: 'user added'}, status: :ok
     else 
       render json: {message: 'error adding user'}, status: :unprocessable_entity
@@ -141,6 +149,8 @@ class ChatsController < ApplicationController
 
     participation = chat.chat_participants.where(participant_id: user.id)[0]
     if participation.destroy
+      UserChatsChannel.broadcast_to(user, 'removed chat' )
+
       render json: {message: 'user removed'}, status: :ok
     else
       render json: {message: 'error removing user from chat'}, status: :unprocessable_entity
