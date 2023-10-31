@@ -58,7 +58,7 @@ class ChatsController < ApplicationController
     if chat.save
       user = current_devise_api_token.resource_owner
       chat.chat_participants.create(participant_id: user.id)
-      UserChatsChannel.broadcast_to(user, 'added chat' )
+      UserChatsChannel.broadcast_to(user, {id: chat.id } )
       render json: chat
     else
       render json: chat.errors, status: :unprocessable_entity
@@ -132,7 +132,7 @@ class ChatsController < ApplicationController
     return if chat.admin != current_user || chat.participants.include?(user)
 
     if chat.chat_participants.create(participant_id: user.id)
-      UserChatsChannel.broadcast_to(user, 'new' )
+      UserChatsChannel.broadcast_to(user, {id: chat.id} )
 
       render json: {message: 'user added'}, status: :ok
     else 

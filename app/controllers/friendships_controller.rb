@@ -76,6 +76,10 @@ class FriendshipsController < ApplicationController
       chat = Chat.create(type: 'direct')
       chat.chat_participants.create(participant_id: current_user.id)
       chat.chat_participants.create(participant_id: user.id)
+      [current_user, user].each do |user| 
+        UserChatsChannel.broadcast_to(user, {id: chat.id} )
+      end
+
       
       render json: { status: 'added' }, status: :ok
     end
@@ -94,6 +98,9 @@ class FriendshipsController < ApplicationController
       direct_chats = current_user.chats.where(type: 'direct')
       chat = direct_chats.select { |chat_| chat_.participant_ids.include?(user.id) }
       chat[0].destroy
+      [current_user, user].each do |user| 
+        UserChatsChannel.broadcast_to(user, 'remove chat' )
+      end
 
       render json: { message: 'removed friend' }
     end
