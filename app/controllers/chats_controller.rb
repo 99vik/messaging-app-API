@@ -47,8 +47,17 @@ class ChatsController < ApplicationController
   end
 
   def get_all_public_chats
+    current_user = current_devise_api_token.resource_owner
+
     public_chats = Chat.where("type = ?", 'public')
-    render json: public_chats
+    public_chats_filtered = public_chats.select { |chat| !chat.participant_ids.include?(current_user.id) }
+
+    chats = public_chats_filtered.map do |chat|
+        image = chat.image.attached? ? url_for(chat.image) : nil
+        chat.as_json.merge(image: image, participants: chat.participants.count)
+    end
+
+    render json: chats
   end
 
   def create_chat
