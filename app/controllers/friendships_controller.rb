@@ -97,9 +97,10 @@ class FriendshipsController < ApplicationController
 
       direct_chats = current_user.chats.where(type: 'direct')
       chat = direct_chats.select { |chat_| chat_.participant_ids.include?(user.id) }
+      chat_id = chat[0].id
       chat[0].destroy
       [current_user, user].each do |user| 
-        UserChatsChannel.broadcast_to(user, 'remove chat' )
+        UserChatsChannel.broadcast_to(user, {remove_id: chat_id} )
       end
 
       render json: { message: 'removed friend' }

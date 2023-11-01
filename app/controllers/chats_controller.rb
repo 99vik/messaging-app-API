@@ -20,7 +20,7 @@ class ChatsController < ApplicationController
           chat.as_json.merge(last_message: last_message, name: other_user.username, image: image, last_message_time: last_message_time.to_i)
         else
           image = chat.image.attached? ? url_for(chat.image) : nil
-          chat.as_json.merge(last_message: last_message, image: image, last_message_time: last_message_time.to_i)
+          chat.as_json.merge(last_message: last_message ? last_message.as_json.merge(author: last_message.user.username) : last_message, image: image, last_message_time: last_message_time.to_i)
         end
       end
 
@@ -149,7 +149,7 @@ class ChatsController < ApplicationController
 
     participation = chat.chat_participants.where(participant_id: user.id)[0]
     if participation.destroy
-      UserChatsChannel.broadcast_to(user, 'removed chat' )
+      UserChatsChannel.broadcast_to(user, {remove_id: chat_id} )
 
       render json: {message: 'user removed'}, status: :ok
     else
