@@ -17,6 +17,19 @@ class FriendshipsController < ApplicationController
     end
   end
 
+  def get_friend_requests
+    current_user = current_devise_api_token.resource_owner
+
+    requests = current_user.incoming_friend_requests
+    requests_with_user = requests.map do |request|
+      user = request.sender
+      image = user.image.attached? ? url_for(user.image) : nil
+      user.as_json.merge(image: image)
+      request.as_json.merge(user: {description: user.description, id: user.id, username: user.username, image: image})
+    end
+    render json: requests_with_user
+  end
+
   def check_friendship_status
     current_user = current_devise_api_token.resource_owner
     user = User.find(params[:id])
