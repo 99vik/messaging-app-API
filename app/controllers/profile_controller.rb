@@ -13,7 +13,7 @@ class ProfileController < ApplicationController
     user = current_devise_api_token.resource_owner
 
     if user.update(username_params)
-      render json: { message: 'Username updated' }, status: :ok 
+      render json: { message: 'Username updated.' }, status: :ok 
     else
       render json: user.errors, status: :unprocessable_entity
     end

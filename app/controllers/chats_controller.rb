@@ -17,7 +17,7 @@ class ChatsController < ApplicationController
         if chat[:type] == 'direct'
           other_user = User.find(chat.participant_ids.find { |id| id != current_devise_api_token.resource_owner.id })
           image = other_user.image.attached? ? url_for(other_user.image) : nil
-          chat.as_json.merge(last_message: last_message, name: other_user.username, image: image, last_message_time: last_message_time.to_i)
+          chat.as_json.merge(last_message: last_message, name: other_user.username, user: other_user.as_json.merge(image: other_user.image.attached? ? url_for(other_user.image) : nil), image: image, last_message_time: last_message_time.to_i)
         else
           image = chat.image.attached? ? url_for(chat.image) : nil
           chat.as_json.merge(last_message: last_message ? last_message.as_json.merge(author: last_message.user.username) : last_message, image: image, last_message_time: last_message_time.to_i)
@@ -158,7 +158,7 @@ class ChatsController < ApplicationController
 
     participation = chat.chat_participants.where(participant_id: user.id)[0]
     if participation.destroy
-      UserChatsChannel.broadcast_to(user, {remove_id: chat_id} )
+      UserChatsChannel.broadcast_to(user, {remove_id: chat.id} )
 
       render json: {message: 'user removed'}, status: :ok
     else
