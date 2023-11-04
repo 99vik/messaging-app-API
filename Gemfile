@@ -50,3 +50,11 @@ end
 gem "devise", "~> 4.9"
 
 gem "devise-api", "~> 0.1.3"
+
+gem "dockerfile-rails", ">= 1.5", :group => :development
+
+gem "redis", "~> 5.0"
+
+gem "sentry-ruby", "~> 5.12"
+
+gem "sentry-rails", "~> 5.12"
