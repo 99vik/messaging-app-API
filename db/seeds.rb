@@ -1,7 +1,7 @@
-ActiveRecord::Base.connection.reset_pk_sequence!('users')
 Friendship.destroy_all
 Chat.destroy_all
 User.destroy_all
+ActiveRecord::Base.connection.reset_pk_sequence!('users')
 
 def create_users
     User.create(username: "Test User1", email: "test.email1@mail.com", password: "password")
@@ -68,7 +68,7 @@ def create_users
   def create_friendships
     users = [User.first, User.second, User.third]
     users.each do |user|
-      User.all.to_a.sample(rand(5..20)).each do |friend|
+      User.all.to_a.sample(rand(5..15)).each do |friend|
         next if user.id == friend || Friendship.where(user_id: user.id).where(friend_id: friend).any?
         Friendship.create(user_id: user.id, friend_id: friend.id)
         Friendship.create(user_id: friend.id, friend_id: user.id)
@@ -78,6 +78,16 @@ def create_users
         rand(0..15).times do
             chat.messages.create(body: generate_random_text, user_id: chat.participants.sample.id)
           end
+      end
+    end
+  end
+
+  def create_friend_requests
+    users = [User.first, User.second, User.third]
+    users.each do |user|
+      User.all.to_a.sample(rand(5..10)).each do |friend|
+        next if user.id == friend || Friendship.where(user_id: user.id).where(friend_id: friend).any?|| FriendRequest.where(sender_id: friend.id).where(reciever_id: user).any?
+        FriendRequest.create(sender_id: friend.id, reciever_id: user.id)
       end
     end
   end
@@ -117,3 +127,4 @@ def create_users
   create_users
   create_public_chats
   create_friendships
+  create_friend_requests
