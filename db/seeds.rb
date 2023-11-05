@@ -2,33 +2,34 @@ FriendRequest.destroy_all
 Friendship.destroy_all
 Chat.destroy_all
 User.destroy_all
+ActiveRecord::Base.connection.reset_pk_sequence!('users')
 
 def create_users
-    User.create(username: "Test User1", email: "test.email1@mail.com", password: "password")
-    User.create(username: "Test User2", email: "test.email2@mail.com", password: "password")
-    User.create(username: "Test User3", email: "test.email3@mail.com", password: "password")
-    User.create(username: "John Doe", email: "johndoe@mail.com", password: "password")
-    User.create(username: "Jane Doe", email: "janedoe@mail.com", password: "password")
-    User.create(username: "Robert Barret", email: "robertbarret@mail.com", password: "password")
-    User.create(username: "Jack Khan", email: "jackhkan@mail.com", password: "password")
-    User.create(username: "Henry Simpson", email: "henrysimpson@mail.com", password: "password")
-    User.create(username: "Hayden Harper", email: "haydenharper@mail.com", password: "password")
-    User.create(username: "Jack Kennedy", email: "jackkennedy@mail.com", password: "password")
-    User.create(username: "Memphis Valenzuela", email: "mempisvelzuela@mail.com", password: "password")
-    User.create(username: "Camdyn Daniel", email: "camdydaniel@mail.com", password: "password")
-    User.create(username: "Braylon Wiggins", email: "braylonwiggins@mail.com", password: "password")
-    User.create(username: "Micah Hayes", email: "micahhayes@mail.com", password: "password")
-    User.create(username: "Darwin Aguilar", email: "darwinaguliar@mail.com", password: "password")
-    User.create(username: "Anthony Cook", email: "anthonycook@mail.com", password: "password")
-    User.create(username: "Zaid Davidsons", email: "zaiddavidson@mail.com", password: "password")
-    User.create(username: "Alfie Fisher", email: "alfiefisher@mail.com", password: "password")
-    User.create(username: "Adan Head", email: "adanhead@mail.com", password: "password")
-    User.create(username: "Zachary Chapman", email: "zacharychapman@mail.com", password: "password")
-    User.create(username: "William Chapman", email: "williamchapman@mail.com", password: "password")
-    User.create(username: "Tyler Pearce", email: "tylerpearce@mail.com", password: "password")
-    User.create(username: "Tommy Sharp", email: "tomysharp@mail.com", password: "password")
-    User.create(username: "Emily Wilson", email: "emilywilson@mail.com", password: "password")
-    User.create(username: "Alexander Garcia", email: "alexandergarcia@mail.com", password: "password")
+    User.create(id: 1, username: "Test User1", email: "test.email1@mail.com", password: "password")
+    User.create(id: 2, username: "Test User2", email: "test.email2@mail.com", password: "password")
+    User.create(id: 3, username: "Test User3", email: "test.email3@mail.com", password: "password")
+    User.create(id: 4, username: "John Doe", email: "johndoe@mail.com", password: "password")
+    User.create(id: 5, username: "Jane Doe", email: "janedoe@mail.com", password: "password")
+    User.create(id: 6, username: "Robert Barret", email: "robertbarret@mail.com", password: "password")
+    User.create(id: 7, username: "Jack Khan", email: "jackhkan@mail.com", password: "password")
+    User.create(id: 8, username: "Henry Simpson", email: "henrysimpson@mail.com", password: "password")
+    User.create(id: 9, username: "Hayden Harper", email: "haydenharper@mail.com", password: "password")
+    User.create(id: 10, username: "Jack Kennedy", email: "jackkennedy@mail.com", password: "password")
+    User.create(id: 11, username: "Memphis Valenzuela", email: "mempisvelzuela@mail.com", password: "password")
+    User.create(id: 12, username: "Camdyn Daniel", email: "camdydaniel@mail.com", password: "password")
+    User.create(id: 13, username: "Braylon Wiggins", email: "braylonwiggins@mail.com", password: "password")
+    User.create(id: 15, username: "Micah Hayes", email: "micahhayes@mail.com", password: "password")
+    User.create(id: 16, username: "Darwin Aguilar", email: "darwinaguliar@mail.com", password: "password")
+    User.create(id: 17, username: "Anthony Cook", email: "anthonycook@mail.com", password: "password")
+    User.create(id: 18, username: "Zaid Davidsons", email: "zaiddavidson@mail.com", password: "password")
+    User.create(id: 19, username: "Alfie Fisher", email: "alfiefisher@mail.com", password: "password")
+    User.create(id: 20, username: "Adan Head", email: "adanhead@mail.com", password: "password")
+    User.create(id: 21, username: "Zachary Chapman", email: "zacharychapman@mail.com", password: "password")
+    User.create(id: 22, username: "William Chapman", email: "williamchapman@mail.com", password: "password")
+    User.create(id: 23, username: "Tyler Pearce", email: "tylerpearce@mail.com", password: "password")
+    User.create(id: 24, username: "Tommy Sharp", email: "tomysharp@mail.com", password: "password")
+    User.create(id: 25, username: "Emily Wilson", email: "emilywilson@mail.com", password: "password")
+    User.create(id: 26, username: "Alexander Garcia", email: "alexandergarcia@mail.com", password: "password")
 end
   
   def create_public_chats
@@ -69,7 +70,7 @@ end
     users = [User.first, User.second, User.third]
     users.each do |user|
       User.all.to_a.sample(rand(5..15)).each do |friend|
-        next if user.id == friend || Friendship.where(user_id: user.id).where(friend_id: friend).any?
+        next if user.id == friend.id || Friendship.where(user_id: user.id).where(friend_id: friend.id).any?
         Friendship.create(user_id: user.id, friend_id: friend.id)
         Friendship.create(user_id: friend.id, friend_id: user.id)
         chat = Chat.create(type: 'direct')
@@ -86,7 +87,7 @@ end
     users = [User.first, User.second, User.third]
     users.each do |user|
       User.all.to_a.sample(rand(5..10)).each do |friend|
-        next if user.id == friend || Friendship.where(user_id: user.id).where(friend_id: friend).any?|| FriendRequest.where(sender_id: friend.id).where(reciever_id: user).any?
+        next if user.id == friend.id || Friendship.where(user_id: user.id).where(friend_id: friend.id).any?|| FriendRequest.where(sender_id: friend.id).where(reciever_id: user.id).any?
         FriendRequest.create(sender_id: friend.id, reciever_id: user.id)
       end
     end
