@@ -10,7 +10,7 @@ class MessagesController < ApplicationController
         if !chat.participant_ids.include?(user_id)
           render json: { message: "User is not chat participant" }, status: :unauthorized
         else
-          messages_with_users = chat.messages.map do |message|
+          messages_with_users = chat.messages.sort_by {|message| message.created_at }.map do |message|
             message_user = message.user
             user = {
               id: message_user.id,
