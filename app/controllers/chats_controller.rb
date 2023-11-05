@@ -67,7 +67,9 @@ class ChatsController < ApplicationController
     if chat.save
       user = current_devise_api_token.resource_owner
       chat.chat_participants.create(participant_id: user.id)
-      UserChatsChannel.broadcast_to(user, {id: chat.id } )
+      ActionCable.server.broadcast("user_#{user.id}", 'refresh')
+
+      # UserChatsChannel.broadcast_to(user, {id: chat.id } )
       render json: chat
     else
       render json: chat.errors, status: :unprocessable_entity
@@ -82,7 +84,8 @@ class ChatsController < ApplicationController
 
     if !chat.participant_ids.include?(user.id)
       chat.chat_participants.create(participant_id: user.id)
-      UserChatsChannel.broadcast_to(user, {id: chat.id} )
+      ActionCable.server.broadcast("user_#{user.id}", 'refresh')
+      # UserChatsChannel.broadcast_to(user, {id: chat.id} )
 
       render json: chat, status: :ok
     else
@@ -110,7 +113,8 @@ class ChatsController < ApplicationController
     participation = chat.chat_participants.where(participant_id: current_user.id)[0]
     if participation.destroy
       user = current_user
-      UserChatsChannel.broadcast_to(user, 'change' )
+      ActionCable.server.broadcast("user_#{user.id}", 'refresh')
+      # UserChatsChannel.broadcast_to(user, 'change' )
       render json: {message: 'left chat'}, status: :ok
     else
       render json: {message: 'error'}, status: :unprocessable_entity
@@ -141,7 +145,8 @@ class ChatsController < ApplicationController
     return if chat.admin != current_user || chat.participants.include?(user)
 
     if chat.chat_participants.create(participant_id: user.id)
-      UserChatsChannel.broadcast_to(user, {id: chat.id} )
+      ActionCable.server.broadcast("user_#{user.id}", 'refresh')
+      # UserChatsChannel.broadcast_to(user, {id: chat.id} )
 
       render json: {message: 'user added'}, status: :ok
     else 
@@ -158,7 +163,8 @@ class ChatsController < ApplicationController
 
     participation = chat.chat_participants.where(participant_id: user.id)[0]
     if participation.destroy
-      UserChatsChannel.broadcast_to(user, {remove_id: chat.id} )
+      ActionCable.server.broadcast("user_#{user.id}", 'refresh')
+      # UserChatsChannel.broadcast_to(user, {remove_id: chat.id} )
 
       render json: {message: 'user removed'}, status: :ok
     else

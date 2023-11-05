@@ -46,7 +46,9 @@ class MessagesController < ApplicationController
         image: user.image.attached? ? url_for(user.image) : nil
       }
       ChatChannel.broadcast_to(chat, message.as_json.merge(user: user_data))
-      UserChatsChannel.broadcast_to(chat, 'change' )
+      chat.participant_ids.each do |id|
+        ActionCable.server.broadcast("user_#{id}", 'refresh')
+      end
       
       render json: {message: 'Message sent'}, status: :ok
     else

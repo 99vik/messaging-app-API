@@ -1,7 +1,7 @@
+FriendRequest.destroy_all
 Friendship.destroy_all
 Chat.destroy_all
 User.destroy_all
-ActiveRecord::Base.connection.reset_pk_sequence!('users')
 
 def create_users
     User.create(username: "Test User1", email: "test.email1@mail.com", password: "password")
@@ -29,7 +29,7 @@ def create_users
     User.create(username: "Tommy Sharp", email: "tomysharp@mail.com", password: "password")
     User.create(username: "Emily Wilson", email: "emilywilson@mail.com", password: "password")
     User.create(username: "Alexander Garcia", email: "alexandergarcia@mail.com", password: "password")
-  end
+end
   
   def create_public_chats
     Chat.create(type: 'public', name: 'Football')
@@ -47,10 +47,10 @@ def create_users
     Chat.create(admin_id: User.second.id, type: 'public', name: 'User2 chat')
     Chat.create(admin_id: User.third.id, type: 'public', name: 'User3 chat')
 
-    Chat.first.image.attach(io: File.open("#{Rails.root}/app/assets/images/football.jpg"), filename: 'football.jpg' , content_type: 'image/jpg')
-    Chat.second.image.attach(io: File.open("#{Rails.root}/app/assets/images/basketball.jpg"), filename: 'basketball.jpg' , content_type: 'image/jpg')
-    Chat.third.image.attach(io: File.open("#{Rails.root}/app/assets/images/gaming.jpg"), filename: 'gaming.jpg' , content_type: 'image/jpg')
-    Chat.fourth.image.attach(io: File.open("#{Rails.root}/app/assets/images/programming.jpg"), filename: 'programming.jpg' , content_type: 'image/jpg')
+    Chat.first.image.attach(io: File.open("#{Rails.root}/data/images/football.jpg"), filename: 'football.jpg' , content_type: 'image/jpg')
+    Chat.second.image.attach(io: File.open("#{Rails.root}/data/images/basketball.jpg"), filename: 'basketball.jpg' , content_type: 'image/jpg')
+    Chat.third.image.attach(io: File.open("#{Rails.root}/data/images/gaming.jpg"), filename: 'gaming.jpg' , content_type: 'image/jpg')
+    Chat.fourth.image.attach(io: File.open("#{Rails.root}/data/images/programming.jpg"), filename: 'programming.jpg' , content_type: 'image/jpg')
 
     public_chats = Chat.all
     public_chats.each do |chat|
@@ -128,3 +128,4 @@ def create_users
   create_public_chats
   create_friendships
   create_friend_requests
+
